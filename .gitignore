@@ -1,0 +1,10 @@
+.DS_Store
+composer.json
+/vendor
+/test
+
+
+# IDE Files
+#-------------------------
+/nbproject/
+.idea/*
