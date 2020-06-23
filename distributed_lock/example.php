@@ -9,8 +9,8 @@
  */
 
 require_once '../vendor/autoload.php';
+require_once '../utils';
 
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 $start_time = microtime(true);
@@ -90,21 +90,6 @@ function get_redis() {
     return $redis;
 }
 
-function get_mysql() {
-    $host = '127.0.0.1';
-    $user='root';
-    $password='123456';
-    $db_name='test';
-
-    $mysql = new mysqli($host,$user,$password,$db_name);
-
-    if ($mysql->connect_error) {
-        exit('mysql 连接失败: ' . $mysql->connect_error);
-    }
-
-    return $mysql;
-}
-
 function pttl_monitor($key, $pttl) {
     $mq = get_rabbitmq();
 
@@ -115,18 +100,13 @@ function pttl_monitor($key, $pttl) {
     $ch->basic_publish($msg, '', 'ttl_monitor');
 
     $ch->close();
-    $mq->close();
+    try {
+        $mq->close();
+    } catch (Exception $e) {
+        print_r($e->getMessage());
+    }
 
-}
 
-function get_rabbitmq() {
-    $host = '127.0.0.1';
-    $port = 5672;
-    $username = 'admin';
-    $password = 'admin';
-    $vhost    = 'my_vhost';
-
-    return new AMQPStreamConnection($host, $port, $username, $password, $vhost);
 }
 
 function randon_code($len = 16) {
