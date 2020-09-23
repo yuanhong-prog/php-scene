@@ -15,3 +15,25 @@
 50个库存，分5个key进行存储，每个里面放10个库存，那么可以对这5个key进行加锁，效率提高5倍
 
 [面试官：每秒上千订单的场景下，如何对分布式锁进行高并发优化？](https://blog.csdn.net/qq_42046105/article/details/102577610)
+
+## 依赖服务
+- mysql
+- redis
+- rabbitmq
+
+如果没有上述依赖，可运行 sh docker/run.sh
+
+## 依赖 mysql DDL
+- ddl.sql(如果使用了上述docker搭建的mysql, 则不需要运行DDL)
+
+## 启动
+```
+# 启动服务
+sh run.sh 
+
+# 下单服务
+curl localhost:8888/create_order.php
+
+```
+
+## 效果

@@ -7,7 +7,7 @@
  */
 
 require_once '../vendor/autoload.php';
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+require_once '../utils/common.php';
 
 $mq = get_rabbitmq();
 
@@ -20,16 +20,19 @@ $ch->basic_consume('ttl_monitor', '', false, true, false, false, function ($msg)
     $ori_pttl = $msg['pttl'];
 
     $redis = get_redis();
-    while(true) {
+    $extension_times = 0;
+    while (true) {
+        $extension_times ++;
         $current_pttl = $redis->pttl($redis_key);
-        if ($current_pttl < 0) {
+        // 已过期或者延长次数大于3次，则不再进行延长，这里的时间根据业务运行的时间来把控，主要是防止下单系统崩溃导致未释放锁，发生死锁
+        if ($current_pttl < 0 || $extension_times >= 3) {
             break;
         }
 
         if (($ori_pttl - $current_pttl) >= $ori_pttl / 3) {
             $pttl = $ori_pttl + $current_pttl;
             echo "key = $redis_key 延长过期时间, 当前剩余过期时间 = $current_pttl 毫秒, 延长后的剩余过期时间 = $pttl 毫秒" . PHP_EOL;
-            $redis->pExpire($redis_key,$pttl);
+            $redis->pExpire($redis_key, $pttl);
         }
     }
 
@@ -39,27 +42,4 @@ echo ' [*] ttl monitor running. To exit press CTRL+C', "\n";
 
 while(count($ch->callbacks)) {
     $ch->wait();
-}
-
-function get_rabbitmq() {
-    $host     = '127.0.0.1';
-    $port     = 5672;
-    $username = 'admin';
-    $password = 'admin';
-    $vhost    = 'my_vhost';
-
-    return new AMQPStreamConnection($host, $port, $username, $password, $vhost);
-}
-
-function get_redis() {
-    $host = '127.0.0.1';
-    $auth = 'redis';
-    $redis = new Redis();
-    $redis->connect($host);
-    $redis->auth($auth);
-    $result = $redis->ping();
-    if ($result != '+PONG') {
-        exit('redis 连接失败: ' . $redis->getLastError());
-    }
-    return $redis;
 }
