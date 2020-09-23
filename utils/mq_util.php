@@ -9,15 +9,21 @@
 require_once '../vendor/autoload.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
-function get_rabbitmq_conn() {
+function get_rabbitmq() {
     $host = '127.0.0.1';
     $port = 5672;
     $username = 'admin';
     $password = 'admin';
     $vhost    = 'my_vhost';
 
-    return new AMQPStreamConnection($host, $port, $username, $password, $vhost);
+    try {
+        $conn = new AMQPStreamConnection($host, $port, $username, $password, $vhost);
+    } catch (Exception $e) {
+        echo 'connect rabbitmq fail!';
+        print_r($e);
+        exit();
+    }
+    return $conn;
 }
 

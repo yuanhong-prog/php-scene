@@ -4,11 +4,13 @@
  * User: 渊虹
  * Date: 2020/5/23
  * Time: 10:34 AM
+ *
+ * @throws RedisException
  */
 
 function get_redis() {
     $host = '127.0.0.1';
-    $auth = 'redis';
+    $auth = '123456';
     $redis = new Redis();
     $redis->connect($host);
     $redis->auth($auth);

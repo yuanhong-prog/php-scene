@@ -42,7 +42,6 @@ while (count($channel->callbacks)) {
             echo 'close mq fail' . PHP_EOL;
             print_r($e->getMessage());
         }
-
     }
 }
 

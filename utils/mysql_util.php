@@ -12,10 +12,8 @@ function get_mysql() {
     $db_name='test';
 
     $mysql = new mysqli($host,$user,$password,$db_name);
-
     if ($mysql->connect_error) {
         exit('mysql 连接失败: ' . $mysql->connect_error);
     }
-
     return $mysql;
 }
