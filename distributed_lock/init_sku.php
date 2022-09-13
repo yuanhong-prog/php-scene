@@ -3,7 +3,7 @@ require_once '../vendor/autoload.php';
 require_once '../utils/common.php';
 
 $sku_id = 1;
-$stock  = 5;
+$stock  = 100;
 
 $mysql = get_mysql();
 
@@ -29,7 +29,7 @@ if ($select_sku_res->num_rows) {
 // 存储库存值的redis key
 $stock_key = 'SKU_STOCK_' . $sku_id;
 
-$stock = $redis->set($stock_key, $stock);
+$redis->set($stock_key, $stock);
 echo 'init sku success! sku_id = ' . $sku_id . ', stock = ' . $stock . PHP_EOL;
 
 

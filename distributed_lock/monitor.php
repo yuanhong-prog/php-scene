@@ -22,14 +22,14 @@ $ch->basic_consume('ttl_monitor', '', false, true, false, false, function ($msg)
     $redis = get_redis();
     $extension_times = 0;
     while (true) {
-        $extension_times ++;
         $current_pttl = $redis->pttl($redis_key);
         // 已过期或者延长次数大于3次，则不再进行延长，这里的时间根据业务运行的时间来把控，主要是防止下单系统崩溃导致未释放锁，发生死锁
         if ($current_pttl < 0 || $extension_times >= 3) {
             break;
         }
 
-        if (($ori_pttl - $current_pttl) >= $ori_pttl / 3) {
+        if ($current_pttl <= $ori_pttl / 3) {
+            $extension_times ++;
             $pttl = $ori_pttl + $current_pttl;
             echo "key = $redis_key 延长过期时间, 当前剩余过期时间 = $current_pttl 毫秒, 延长后的剩余过期时间 = $pttl 毫秒" . PHP_EOL;
             $redis->pExpire($redis_key, $pttl);

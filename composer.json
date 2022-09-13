@@ -1,0 +1,13 @@
+{
+    "name": "lucky/php-scene",
+    "authors": [
+        {
+            "name": "YuanHong",
+            "email": "gaoyf6677@gmail.com"
+        }
+    ],
+    "require": {
+        "php-amqplib/php-amqplib": "^3.2",
+        "ext-redis": "*"
+    }
+}

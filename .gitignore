@@ -1,5 +1,4 @@
 .DS_Store
-composer.json
 /vendor
 /test
 *.log

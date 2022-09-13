@@ -1,0 +1,60 @@
+version: "2"
+services:
+  php-scene-mysql:
+    container_name: php-scene-mysql-5.6.28
+    restart: always
+    image: mysql:5.6.28
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      - ./mysql/logs:/var/log/mysql
+      - ./mysql/data:/var/lib/mysql
+    command: [
+        'mysqld',
+        '--innodb-buffer-pool-size=80M',
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+        '--default-time-zone=+8:00',
+        '--lower-case-table-names=1'
+    ]
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+
+  php-scene-redis:
+    container_name: php-scene-redis-6.0.5
+    restart: always
+    image: redis:6.0.5
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/data
+    command: redis-server --appendonly yes --requirepass 123456
+    environment:
+      - TZ="Asia/Shanghai"
+
+  php-scene-rabbitmq:
+    container_name: php-scene-rabbitmq-3.8.1
+    restart: always
+    image: rabbitmq:3.8.1-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_VHOST=my_vhost
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - TZ="Asia/Shanghai"
+
+  php-scene-es:
+    container_name: php-scene-es-7.14.1
+    image: elasticsearch:7.14.1
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./es/data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"

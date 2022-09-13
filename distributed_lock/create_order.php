@@ -36,7 +36,7 @@ if ($stock > 0) {
     $res = $redis->set($lock_key, 1, ['nx', 'px' => 1000]);
 
     // 此次请求拿不到锁，则关闭请求(说明当前存在正在下单的请求)
-    if ($res) {
+    if (!$res) {
         done($start_time,-1);
     }
 
