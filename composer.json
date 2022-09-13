@@ -8,6 +8,7 @@
     ],
     "require": {
         "php-amqplib/php-amqplib": "^3.2",
-        "ext-redis": "*"
+        "ext-redis": "*",
+        "ext-openssl": "*"
     }
 }
